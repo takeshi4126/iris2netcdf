@@ -112,7 +112,11 @@ class RadarScan:
     """
     Read the data part of the iris raw data file. We check only the first key of the data.
     """
-    sweep_data = iris_content['data'][1]['sweep_data']
+    # Obtain the first sweep_data.
+    # Here it is assumed that the iris raw data consists of single sweep data.
+    iris_data = iris_content['data']
+    data_index = next(iter(iris_data))
+    sweep_data = iris_data[data_index]['sweep_data']
 
     # DB_DBZ is a ndarray of shape (360, 352). 360 degrees x 352 range bins.
     self.dbz_polar = sweep_data['DB_DBZ']
@@ -120,11 +124,8 @@ class RadarScan:
     # azimuth is of shape (360,) and contains the azimuth angles in degrees.
     self.azimuth = sweep_data['azimuth']
 
-    # What's this elevation? It's 360 degrees but they vary between directions.
+    # the array of elevations. The array size is 360.
     self.elevation = sweep_data['elevation']
-
-    # What is the dtime? The shape is (360, ) and it contains integers between 1 and 40.
-    self.dtime = sweep_data['dtime']
 
     # Number of range bins for each azimuth. rbins is of shape (360, ). It contains 352 for all az.
     self.rbins = sweep_data['rbins']
